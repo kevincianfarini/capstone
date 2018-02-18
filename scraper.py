@@ -21,10 +21,13 @@ class ArticleArchive:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             if key == 'meta':
-                self.author = value.find(attrs={'class': 'byline'}).text.strip().split()[1]
+                try:
+                    self.author = value.find('span', attrs={'class': 'author'}).text.strip()
+                except:
+                    self.author = 'Unknown'
                 self.publication_date = value.find('time')['datetime']
             else:
-                setattr(self, key, value.text)
+                setattr(self, key, value.text.strip())
 
     def __str__(self):
         return '%s -> (%s, %s)' % (self.title, self.author, self.publication_date)
@@ -84,8 +87,9 @@ def scrape(line):
 if __name__ == '__main__':
     with open(sys.argv[1]) as input:
         if len(sys.argv) == 3 and sys.argv[2] == '--threaded':
-            with Pool(5) as p:
-                print(p.map(scrape, input.read().splitlines()))
+            lines = input.read().splitlines()
+            with Pool(len(lines)) as p:
+                print(p.map(scrape, lines))
         else:
             for line in input:
                 print(scrape(line))
