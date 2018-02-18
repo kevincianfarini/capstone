@@ -10,6 +10,12 @@ class BlogArchive:
         self.name = name
         self.articles = []
 
+    def __str__(self):
+        return '%s -> [%d]' % (self.name, len(self.articles))
+
+    def __repr__(self):
+        return str(self)
+
 
 class ArticleArchive:
     def __init__(self, **kwargs):
@@ -66,21 +72,22 @@ def scrape_wordpress_page(blog, page):
 def scrape_wordpress_blog(url):
     content = requests.get(url).content
     blog_archive = BlogArchive(
-        BeautifulSoup(content, 'html.parser').find('h1', attrs={'class': 'site-title'})
+        BeautifulSoup(content, 'html.parser').find('h1', attrs={'class': 'site-title'}).text
     )
     for page in WordPressBlog(url):
         scrape_wordpress_page(blog_archive, page)
+    return blog_archive
 
 def scrape(line):
     if 'wordpress' in line.strip():
-        scrape_wordpress_blog(line.split('->')[0].strip())
+        return scrape_wordpress_blog(line.split('->')[0].strip())
 
 if __name__ == '__main__':
     with open(sys.argv[1]) as input:
         if len(sys.argv) == 3 and sys.argv[2] == '--threaded':
             with Pool(5) as p:
-                p.map(scrape, input.read().splitlines())
-        else: # for debugging
+                print(p.map(scrape, input.read().splitlines()))
+        else:
             for line in input:
-                scrape(line)
+                print(scrape(line))
             
