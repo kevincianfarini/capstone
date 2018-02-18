@@ -19,11 +19,23 @@ class WordPressBlog:
 
 
 
-def scrape_wordpress_article(url):
-    pass
+def scrape_wordpress_article(title, content, footer):
+    print(title)
 
 def scrape_wordpress_page(page):
-    print('yay')
+    def parse(text):
+        parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'footer']}
+        parsed['title'] = text.find_all('header', limit=2)[1].find('h1')
+        return parsed
+
+    for article in page.find_all('article'):
+        link = article.find(attrs={'class': 'entry-title'}).find('a')
+        if link and 'wordpress' in link['href']:
+            response = requests.get(link['href'])
+            if response.status_code != 404:
+                html = BeautifulSoup(response.content, 'html.parser')
+                scrape_wordpress_article(**parse(html))
+
 
 def scrape_wordpress_blog(url):
     for page in WordPressBlog(url):
@@ -34,5 +46,7 @@ def scrape(url):
         scrape_wordpress_blog(url)
 
 if __name__ == '__main__':
-    for line in sys.stdin:
-        scrape(line)
+    with open(sys.argv[1]) as input:
+        for line in input:
+            scrape(line.strip())
+            print('------------------------------------------------------------------------------------------------------------------------------------------------')
