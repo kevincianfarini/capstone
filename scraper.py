@@ -3,6 +3,26 @@ from bs4 import BeautifulSoup
 from multiprocessing import Pool
 
 
+class BlogArchive:
+    def __init__(self, name):
+        if name is None:
+            raise ValueError('Name Cannot be None')
+        self.name = name
+        self.articles = []
+
+
+class ArticleArchive:
+    def __init__(self, **kwargs):
+        meta = kwargs.pop('meta', None)
+        if meta:
+            self.author = meta.find(attrs={'class': 'byline'}).text.strip().split()[1]
+            self.publication_date = meta.find('time')['datetime']
+        self.__dict__.update(kwargs) # title, content, footer
+
+    def __str__(self):
+        return '%s -> (%s, %s)' % (self.title, self.author, self.publication_date)
+
+
 class WordPressBlog:
     def __init__(self, url):
         self.url = url
@@ -20,12 +40,14 @@ class WordPressBlog:
 
 
 
-def scrape_wordpress_article(title, content, footer):
-    print(title)
+def scrape_wordpress_article(blog, **kwargs):
+    article = ArticleArchive(**kwargs)
+    print(article)
+    blog.articles.append(article)
 
-def scrape_wordpress_page(page):
+def scrape_wordpress_page(blog, page):
     def parse(text):
-        parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'footer']}
+        parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'footer', 'meta']}
         parsed['title'] = text.find_all('header', limit=2)[1].find('h1')
         return parsed
 
@@ -35,14 +57,17 @@ def scrape_wordpress_page(page):
             response = requests.get(link['href'])
             if response.status_code != 404:
                 html = BeautifulSoup(response.content, 'html.parser')
-                scrape_wordpress_article(**parse(html))
+                scrape_wordpress_article(blog=blog, **parse(html))
             else:
                 print('404: %s' % link['href'])
 
-
 def scrape_wordpress_blog(url):
+    content = requests.get(url).content
+    blog_archive = BlogArchive(
+        BeautifulSoup(content, 'html.parser').find('h1', attrs={'class': 'site-title'})
+    )
     for page in WordPressBlog(url):
-        scrape_wordpress_page(page)
+        scrape_wordpress_page(blog_archive, page)
 
 def scrape(line):
     if 'wordpress' in line.strip():
@@ -53,7 +78,7 @@ if __name__ == '__main__':
         if len(sys.argv) == 3 and sys.argv[2] == '--threaded':
             with Pool(5) as p:
                 p.map(scrape, input.read().splitlines())
-        else:
+        else: # for debugging
             for line in input:
                 scrape(line)
             
