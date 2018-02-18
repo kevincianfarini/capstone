@@ -13,11 +13,13 @@ class BlogArchive:
 
 class ArticleArchive:
     def __init__(self, **kwargs):
-        meta = kwargs.pop('meta', None)
-        if meta:
-            self.author = meta.find(attrs={'class': 'byline'}).text.strip().split()[1]
-            self.publication_date = meta.find('time')['datetime']
-        self.__dict__.update(kwargs) # title, content, footer
+        for key, value in kwargs.items():
+            if key == 'meta':
+                self.author = value.find(attrs={'class': 'byline'}).text.strip().split()[1]
+                self.publication_date = value.find('time')['datetime']
+            else:
+                setattr(self, key, value.text)
+
 
     def __str__(self):
         return '%s -> (%s, %s)' % (self.title, self.author, self.publication_date)
@@ -47,7 +49,7 @@ def scrape_wordpress_article(blog, **kwargs):
 
 def scrape_wordpress_page(blog, page):
     def parse(text):
-        parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'footer', 'meta']}
+        parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'meta']}
         parsed['title'] = text.find_all('header', limit=2)[1].find('h1')
         return parsed
 
