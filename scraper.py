@@ -1,5 +1,6 @@
 import requests, warc, sys
 from bs4 import BeautifulSoup
+from multiprocessing import Pool
 
 
 class WordPressBlog:
@@ -30,23 +31,29 @@ def scrape_wordpress_page(page):
 
     for article in page.find_all('article'):
         link = article.find(attrs={'class': 'entry-title'}).find('a')
-        if link and 'wordpress' in link['href']:
+        if link:
             response = requests.get(link['href'])
             if response.status_code != 404:
                 html = BeautifulSoup(response.content, 'html.parser')
                 scrape_wordpress_article(**parse(html))
+            else:
+                print('404: %s' % link['href'])
 
 
 def scrape_wordpress_blog(url):
     for page in WordPressBlog(url):
         scrape_wordpress_page(page)
 
-def scrape(url):
-    if 'wordpress' in url:
-        scrape_wordpress_blog(url)
+def scrape(line):
+    if 'wordpress' in line.strip():
+        scrape_wordpress_blog(line.split('->')[0].strip())
 
 if __name__ == '__main__':
     with open(sys.argv[1]) as input:
-        for line in input:
-            scrape(line.strip())
-            print('------------------------------------------------------------------------------------------------------------------------------------------------')
+        if len(sys.argv) == 3 and sys.argv[2] == '--threaded':
+            with Pool(5) as p:
+                p.map(scrape, input.read().splitlines())
+        else:
+            for line in input:
+                scrape(line)
+            
