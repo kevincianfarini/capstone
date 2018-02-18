@@ -26,7 +26,6 @@ class ArticleArchive:
             else:
                 setattr(self, key, value.text)
 
-
     def __str__(self):
         return '%s -> (%s, %s)' % (self.title, self.author, self.publication_date)
 
