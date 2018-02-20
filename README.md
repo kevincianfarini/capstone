@@ -4,7 +4,7 @@
 git clone <repo url> && cd capstone
 python3 -m venv env
 source env/bin/activate
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## There are two modes to run this in
