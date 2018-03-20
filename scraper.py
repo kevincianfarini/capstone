@@ -50,49 +50,99 @@ class WordPressBlog:
         return BeautifulSoup(response.content, 'html.parser')
 
 
+class BlogSpotBlog:
+    def __init__(self, url):
+        self.url = url
 
-def scrape_wordpress_article(link):
-    def parse(text):
-        parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'meta']}
-        parsed['title'] = text.find_all('header', limit=2)[1].find('h1')
-        return parsed
+    def __iter__(self):
+        return self
 
-    if link:
-        response = requests.get(link['href'])
-        if response.status_code != 404:
-            html = BeautifulSoup(response.content, 'html.parser')
-            article = ArticleArchive(**parse(html))
-            print(article)
-            return article
+    def __next__(self):
+        if self.url is None:
+            raise StopIteration
+        response = requests.get(self.url)
+        page = BeautifulSoup(response.content, 'html.parser')
+        older_posts = page.find('a', attrs={'id': 'Blog1_blog-pager-older-link'})
+        if older_posts:
+            self.url = older_posts['href']
         else:
-            print('404: %s' % link['href'])
+            self.url = None
+        return page
 
-def scrape_wordpress_page(page):
-    return [
-        scrape_wordpress_article(article.find(attrs={'class': 'entry-title'}).find('a')) for 
-            article in page.find_all('article')
-    ]
 
-def scrape_wordpress_blog(url, threaded=False):
-    content = requests.get(url).content
-    blog_archive = BlogArchive(
-        BeautifulSoup(content, 'html.parser').find('h1', attrs={'class': 'site-title'}).text
-    )
+def wordpress(url, threaded):
+    def scrape_wordpress_article(link):
+        def parse(text):
+            parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'meta']}
+            parsed['title'] = text.find_all('header', limit=2)[1].find('h1')
+            return parsed
 
-    if threaded:
-        pages = list(WordPressBlog(url))
-        with ThreadPool(len(pages)) as pool:
-            articles = pool.map(scrape_wordpress_page, pages)
-            blog_archive.articles.extend(list(chain(*articles)))
-    else:
-        for page in WordPressBlog(url):
-            blog_archive.articles.extend(scrape_wordpress_page(page))
+        if link:
+            response = requests.get(link['href'])
+            if response.status_code != 404:
+                html = BeautifulSoup(response.content, 'html.parser')
+                article = ArticleArchive(**parse(html))
+                print(article)
+                return article
+            else:
+                print('404: %s' % link['href'])
 
-    return blog_archive
+    def scrape_wordpress_page(page):
+        return [
+            scrape_wordpress_article(article.find(attrs={'class': 'entry-title'}).find('a')) for 
+                article in page.find_all('article')
+        ]
+
+    def scrape_wordpress_blog(url, threaded):
+        content = requests.get(url).content
+        blog_archive = BlogArchive(
+            BeautifulSoup(content, 'html.parser').find('h1', attrs={'class': 'site-title'}).text
+        )
+
+        if threaded:
+            pages = list(WordPressBlog(url))
+            with ThreadPool(len(pages)) as pool:
+                articles = pool.map(scrape_wordpress_page, pages)
+                blog_archive.articles.extend(list(chain(*articles)))
+        else:
+            for page in WordPressBlog(url):
+                blog_archive.articles.extend(scrape_wordpress_page(page))
+
+        return blog_archive
+
+    return scrape_wordpress_blog(url, threaded)
+
+def blogspot(url, threaded):
+    def create_blog_archive(url):
+        content = BeautifulSoup(requests.get(url).content, 'html.parser')
+        title = content.find('h1', attrs={'class': 'title'})
+        if title:
+            return BlogArchive(title.text.strip())
+        else:
+            title = content.find('img', attrs={'id': 'Header1_headerimg'})['alt']
+            return BlogArchive(title.strip())
+
+    def scrape_blogspot_article():
+        pass
+
+    def scrape_blogspot_page():
+        pass
+
+    def scrape_blogspot_blog(url, threaded):
+        blog_archive = create_blog_archive(url)
+
+        if threaded:
+            raise NotImplemented
+        else:
+            return blog_archive
+
+    return scrape_blogspot_blog(url, threaded)
 
 def scrape(line, threaded=False):
     if 'wordpress' in line.strip():
-        return scrape_wordpress_blog(line.split('->')[0].strip(), threaded)
+        return wordpress(line.split('->')[0].strip(), threaded)
+    elif 'blogspot' in line.strip():
+        return blogspot(line.split('->')[0].strip(), threaded)
 
 if __name__ == '__main__':
     with open(sys.argv[1]) as input:
