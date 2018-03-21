@@ -21,14 +21,13 @@ class BlogArchive:
 class ArticleArchive:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
-            if key == 'meta':
+            if key == 'author':
                 try:
-                    self.author = value.find('span', attrs={'class': 'author'}).text.strip()
+                    self.author = value.text.strip()
                 except:
                     self.author = 'Unknown'
-                self.publication_date = value.find('time')['datetime']
             else:
-                setattr(self, key, value.text.strip())
+                setattr(self, key, value)
 
     def __str__(self):
         return '%s -> (%s, %s)' % (self.title, self.author, self.publication_date)
@@ -81,7 +80,13 @@ def wordpress(url, threaded):
             response = requests.get(link['href'])
             if response.status_code != 404:
                 html = BeautifulSoup(response.content, 'html.parser')
-                article = ArticleArchive(**parse(html))
+                parsed = parse(html)
+                article = ArticleArchive(**{
+                        'title': parsed['title'].text.strip(),
+                        'publication_date': parsed['meta'].find('time')['datetime'],
+                        'author': parsed['meta'].find('span', attrs={'class': 'author'})
+                    }
+                )
                 print(article)
                 return article
             else:
@@ -122,11 +127,17 @@ def blogspot(url, threaded):
             title = content.find('img', attrs={'id': 'Header1_headerimg'})['alt']
             return BlogArchive(title.strip())
 
-    def scrape_blogspot_article():
-        pass
+    def scrape_blogspot_article(link):
+        if link:
+            content = BeautifulSoup(request.get(link['href'].content, 'html.parser'))
 
-    def scrape_blogspot_page():
-        pass
+
+
+    def scrape_blogspot_page(page):
+        return [
+            scrape_blogspot_article(article.find('a')) for 
+                article in page.find_all('h3', attrs={'class': 'post-title'})
+        ]
 
     def scrape_blogspot_blog(url, threaded):
         blog_archive = create_blog_archive(url)
@@ -134,7 +145,8 @@ def blogspot(url, threaded):
         if threaded:
             raise NotImplemented
         else:
-            return blog_archive
+            for page in BlogSpotBlog(url):
+                blog_archive.articles.extend(scrape_blogspot_page(page))
 
     return scrape_blogspot_blog(url, threaded)
 
