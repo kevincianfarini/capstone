@@ -84,7 +84,8 @@ def wordpress(url, threaded):
                 article = ArticleArchive(**{
                         'title': parsed['title'].text.strip(),
                         'publication_date': parsed['meta'].find('time')['datetime'],
-                        'author': parsed['meta'].find('span', attrs={'class': 'author'})
+                        'author': parsed['meta'].find('span', attrs={'class': 'author'}),
+                        'content': parsed['content'].text
                     }
                 )
                 print(article)
@@ -129,10 +130,16 @@ def blogspot(url, threaded):
 
     def scrape_blogspot_article(link):
         if link:
-            content = BeautifulSoup(request.get(link['href'].content, 'html.parser'))
-
-
-
+            page = BeautifulSoup(requests.get(link['href']).content, 'html.parser')
+            article = ArticleArchive(**{
+                'title': page.find('h3', attrs={'class': 'post-title'}).text.strip(),
+                'publication_date': page.find('h2', attrs={'class': 'date-header'}).find('span').text.strip(),
+                'author': page.find(attrs={'class': 'post-author'}).find('span'),
+                'content': page.find(attrs={'class': 'entry-content'}),
+            })
+            print(article)
+            return article
+            
     def scrape_blogspot_page(page):
         return [
             scrape_blogspot_article(article.find('a')) for 
