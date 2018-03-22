@@ -4,7 +4,6 @@ from django.db import models
 
 class Blog(models.Model):
     name = models.CharField(null=False, unique=True, max_length=500)
-    author = models.CharField(null=False, unique=False, max_length=100)
 
 
 class Tag(models.Model):
@@ -13,6 +12,7 @@ class Tag(models.Model):
 
 class BlogPost(models.Model):
     name = models.CharField(null=False, max_length=500)
+    author = models.CharField(null=False, max_length=100)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     document = models.FileField(upload_to='documents')
     tags = models.ManyToManyField(Tag)

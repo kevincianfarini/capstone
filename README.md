@@ -26,5 +26,5 @@ To run this in multithreaded mode
 
 To clear any entries in the database
 ```shell
-python manage.py clear
+env $ python manage.py clear
 ```
