@@ -8,7 +8,7 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-## There are two modes to run this in
+## Running the Project
 
 This project is separated into a Django backing API and a frontend to consume cached blog documents. All frontend logic can be found in `/frontend`. 
 
