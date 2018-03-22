@@ -9,12 +9,16 @@ pip install -r requirements.txt
 
 ## There are two modes to run this in
 
-```shell
-python scraper.py sites.txt
-```
-will run the scraper in a single thread sequentially. This is good for debugging. 
+This project is separated into a Django backing API and a frontend to consume cached blog documents. All frontend logic can be found in `/frontend`. 
+
+To populate the database with blog documents
 
 ```shell
-python scraper.py sites.txt --threaded
+(env) $ python manage.py populate <sites.txt>
 ```
-adds multithreading support to drastically speed things up. This is non-sequential. 
+
+To run this in multithreaded mode 
+
+```shell
+(env) $ python manage.py populate <sites.txt> --threaded
+```
