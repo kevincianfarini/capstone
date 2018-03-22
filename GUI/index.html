@@ -1,0 +1,37 @@
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="bootstrap-multiselect.css" type="text/css"/>
+</head>
+
+<body>
+    <div class='container' style='padding-top: 15px;'>
+        <label>Select tags to search: </label>
+        <select id="example-getting-started" multiple="multiple">
+            <option value="AT">AT</option>
+            <option value="PCT">PCT</option>
+            <option value="CDT">CDT</option>
+            <option value="TrailAngels">Trail Angels</option>
+            <option value="DayHike">Day Hiking</option>
+            <option value="Camping">Camping</option>
+        </select>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#example-getting-started').multiselect();
+            });
+            var db = openDatabase('mydb', '1.0', 'my first database', 2 * 1024 * 1024);
+        </script>
+
+        <button class='btn btn-primary'>Search</button>
+    </div>
+</body>
