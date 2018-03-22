@@ -162,15 +162,17 @@ def blogspot(url, threaded):
 
     return scrape_blogspot_blog(url, threaded)
 
-def scrape(line, threaded=False):
+def scrape_line(line, threaded=False):
     if 'wordpress' in line.strip():
         return wordpress(line.split('->')[0].strip(), threaded)
     elif 'blogspot' in line.strip():
         return blogspot(line.split('->')[0].strip(), threaded)
 
-if __name__ == '__main__':
-    with open(sys.argv[1]) as input:
-        for line in input:
-                print(scrape(line, len(sys.argv) == 3 and sys.argv[2] == '--threaded'))
+def scrape(sites, threaded=False):
+    with open(sites) as lines:
+        return [
+            scrape_line(line, threaded) for line in lines.readlines()
+        ]
+            
             
             
