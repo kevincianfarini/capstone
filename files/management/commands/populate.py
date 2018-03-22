@@ -19,4 +19,5 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):
-        scrape(kwargs['sitefile'], kwargs['threaded'])
+        blogs = scrape(kwargs['sitefile'], kwargs['threaded'])
+        print(blogs)

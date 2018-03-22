@@ -5,6 +5,7 @@ git clone <repo url> && cd capstone
 python3 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
+python manage.py migrate
 ```
 
 ## There are two modes to run this in
@@ -21,4 +22,9 @@ To run this in multithreaded mode
 
 ```shell
 (env) $ python manage.py populate <sites.txt> --threaded
+```
+
+To clear any entries in the database
+```shell
+python manage.py clear
 ```
