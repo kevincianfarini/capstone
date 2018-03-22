@@ -150,10 +150,15 @@ def blogspot(url, threaded):
         blog_archive = create_blog_archive(url)
 
         if threaded:
-            raise NotImplemented
+            pages = list(BlogSpotBlog(url))
+            with ThreadPool(len(pages)) as pool:
+                articles = pool.map(scrape_blogspot_page, pages)
+                blog_archive.articles.extend(list(chain(*articles)))
         else:
             for page in BlogSpotBlog(url):
                 blog_archive.articles.extend(scrape_blogspot_page(page))
+                
+        return blog_archive
 
     return scrape_blogspot_blog(url, threaded)
 
