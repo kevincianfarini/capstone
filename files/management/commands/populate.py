@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from files.models import Blog, BlogPost
 from ._scraper import scrape
 
 class Command(BaseCommand):
@@ -12,12 +13,22 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            '--threaded',
+            '--no-thread',
             action='store_true',
             dest='threaded',
-            help='Run the population in multithreaded mode'
+            help='Run the population without multithreading'
         )
 
     def handle(self, *args, **kwargs):
-        blogs = scrape(kwargs['sitefile'], kwargs['threaded'])
-        
+        blogs = scrape(kwargs['sitefile'], not kwargs['threaded'])
+        print(blogs)
+        for b in blogs:
+            blog, created = Blog.objects.get_or_create(name=b.name)
+            for a in b.articles:
+                blog_post = BlogPost.objects.create(
+                    title=a.title,
+                    author=a.author,
+                    pub_date=a.publication_date,
+                    blog=blog,
+                    body=a.content
+                )

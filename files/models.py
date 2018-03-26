@@ -11,8 +11,9 @@ class Tag(models.Model):
 
 
 class BlogPost(models.Model):
-    name = models.CharField(null=False, max_length=500)
+    title = models.CharField(null=False, max_length=500)
     author = models.CharField(null=False, max_length=100)
+    pub_date = models.CharField(null=False, max_length=100)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    document = models.FileField(upload_to='documents')
+    body = models.TextField()
     tags = models.ManyToManyField(Tag)
