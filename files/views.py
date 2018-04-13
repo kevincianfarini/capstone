@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
-from files.models import BlogPost
+from files.models import BlogPost, Tag
 from django.views import generic
 from rest_framework import generics
-from files.serializers import BlogPostSerializer
+from files.serializers import BlogPostSerializer, TagSerializer
 
 
 class HomepageView(TemplateView):
@@ -30,3 +30,8 @@ class ListBlogPostAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return BlogPost.objects.filter(tags__in=[self.kwargs.pop('tag')])
+
+
+class ListTagAPIView(generics.ListAPIView):
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
