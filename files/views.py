@@ -29,7 +29,8 @@ class ListBlogPostAPIView(generics.ListAPIView):
     serializer_class = BlogPostSerializer
 
     def get_queryset(self):
-        return BlogPost.objects.filter(tags__in=[self.kwargs.pop('tag')])
+        print(self.request.query_params.get('tags').split('|'))
+        return BlogPost.objects.all()
 
 
 class ListTagAPIView(generics.ListAPIView):
