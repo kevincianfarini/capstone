@@ -7,4 +7,4 @@ idna==2.6
 pytz==2018.3
 requests==2.18.4
 urllib3==1.22
-django==2.0.4
+python-rake==1.4.4
