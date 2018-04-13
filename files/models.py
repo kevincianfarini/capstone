@@ -16,3 +16,5 @@ class BlogPost(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     body = models.TextField()
     tags = models.ManyToManyField(Tag)
+    def __str__(self):
+        return self.title
