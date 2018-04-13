@@ -8,6 +8,9 @@ class Blog(models.Model):
 class Tag(models.Model):
     name = models.CharField(null=False, unique=True, max_length=30)
 
+    def __str__(self):
+        return self.name
+
 
 class BlogPost(models.Model):
     title = models.CharField(null=False, max_length=500)
@@ -16,5 +19,14 @@ class BlogPost(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     body = models.TextField()
     tags = models.ManyToManyField(Tag)
+
+    def get_absolute_url(self):
+        return 'files/content/%d/' % self.pk
+
     def __str__(self):
-        return self.title
+        return "%s -> (%s, %s): %s" % (
+            self.title,
+            self.author,
+            self.pub_date,
+            str(self.tags.all())
+        )

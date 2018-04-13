@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from files.models import BlogPost
 from django.views import generic
+from rest_framework import generics
+from files.serializers import BlogPostSerializer
+
 
 class HomepageView(TemplateView):
     template_name = 'frontend/index.html'
@@ -21,3 +24,9 @@ class BlogTableView(generic.ListView):
     def get_queryset(self):
         return BlogPost.objects.all()
 
+
+class ListBlogPostAPIView(generics.ListAPIView):
+    serializer_class = BlogPostSerializer
+
+    def get_queryset(self):
+        return BlogPost.objects.filter(tags__in=[self.kwargs.pop('tag')])
