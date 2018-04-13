@@ -1,4 +1,4 @@
-import requests, warc, sys
+import requests, sys
 from bs4 import BeautifulSoup
 from multiprocessing.pool import ThreadPool
 from itertools import chain
