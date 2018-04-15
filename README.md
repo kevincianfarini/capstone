@@ -40,7 +40,7 @@ and visit localhost:8000 in your browser.
 
 The backend exposes several APIs that the front end can consume. They are:
 ```python
-'/files/tags/?tag=<tag>'
+'/files/tags/?tag=<tag_text>' # returns a list of tags that contain <tag_text>
 '/files/content/<id>/'
 '/files/?tags=<tag1>|<tag2>|<tag3>' # filters BlogPosts which have any of the tags
 ```
