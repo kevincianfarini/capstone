@@ -18,28 +18,26 @@
 <body>
     <div class='container' style='padding-top: 15px;'>
         <label>Select tags to search: </label>
-        <select id="example-getting-started" multiple="multiple">
-            <option value="AT">AT</option>
-            <option value="PCT">PCT</option>
-            <option value="CDT">CDT</option>
-            <option value="TrailAngels">Trail Angels</option>
-            <option value="DayHike">Day Hiking</option>
-            <option value="Camping">Camping</option>
-        </select>
+        <select id="tags" multiple="multiple"></select>
         <script type="text/javascript">
             $(document).ready(function() {
-                $('#example-getting-started').multiselect();
+                $('#tags').multiselect();
             });
-            var db = openDatabase('mydb', '1.0', 'my first database', 2 * 1024 * 1024);
+
+            $.ajax({
+                url: "/files/tags/?tag=fire",
+                type: "GET",
+                success: function(data) {
+                    data.forEach(function(tag) {
+                        $("#tags").append("<option value=" + tag.id + ">" + tag.name + "</option>");
+                    });
+                    $("#tags").multiselect('rebuild');
+                }
+            });
+
         </script>
 
         <button class='btn btn-primary'>Search</button>
     </div>
-
-    <ol>
-        {%for post in all_posts %}
-            <li><a href='../files/content/{{ post.id }}'>{{ post.title }}</a></li>
-        {% endfor %}
-    </ol>
 
 </body>
