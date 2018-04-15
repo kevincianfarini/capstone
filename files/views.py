@@ -4,6 +4,7 @@ from files.models import BlogPost, Tag
 from django.views import generic
 from rest_framework import generics
 from files.serializers import BlogPostSerializer, TagSerializer
+from django.db.models import Q
 
 
 class HomepageView(TemplateView):
@@ -29,8 +30,12 @@ class ListBlogPostAPIView(generics.ListAPIView):
     serializer_class = BlogPostSerializer
 
     def get_queryset(self):
-        print(self.request.query_params.get('tags').split('|'))
-        return BlogPost.objects.all()
+        q = Q()
+        for tag in self.request.query_params.get('tags').split('|'):
+                q |= Q(pk=tag)
+
+        return BlogPost.objects.filter(tags__in=Tag.objects.filter(q))
+            
 
 
 class ListTagAPIView(generics.ListAPIView):
