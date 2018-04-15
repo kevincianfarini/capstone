@@ -18,13 +18,29 @@ To populate the database with blog documents
 (env) $ python manage.py populate <sites.txt>
 ```
 
-To run this in multithreaded mode 
+To generate tags for the cached documents. This can only be run after populating the database
 
 ```shell
-(env) $ python manage.py populate <sites.txt> --threaded
+(env) $ python manage.py tag
 ```
 
 To clear any entries in the database
 ```shell
-env $ python manage.py clear
+(env) $ python manage.py clear
+```
+
+To run the project
+```shell
+(env) $ python manage.py runserver 0.0.0.0:8000
+```
+and visit localhost:8000 in your browser. 
+
+
+## Development Documentation
+
+The backend exposes several APIs that the front end can consume. They are:
+```python
+'/files/tags/?tag=<tag>'
+'/files/content/<id>/'
+'/files/?tags=<tag1>|<tag2>|<tag3>' # filters BlogPosts which have all tags
 ```
