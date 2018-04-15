@@ -14,4 +14,5 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BlogPost
-        fields = '__all__'
+        exclude = ('body', )
+        

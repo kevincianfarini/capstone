@@ -19,6 +19,7 @@ class ContentView(TemplateView):
         context['content'] = BlogPost.objects.get(pk=kwargs['id'])
         return context
 
+
 class BlogTableView(generic.ListView):
     template_name = 'frontend/index.html'
     context_object_name = 'all_posts'
@@ -36,7 +37,6 @@ class ListBlogPostAPIView(generics.ListAPIView):
 
         return BlogPost.objects.filter(tags__in=Tag.objects.filter(q))
             
-
 
 class ListTagAPIView(generics.ListAPIView):
     serializer_class = TagSerializer
