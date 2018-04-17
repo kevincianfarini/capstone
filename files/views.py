@@ -32,7 +32,9 @@ class ListBlogPostAPIView(generics.ListAPIView):
             else:
                 q &= Q(pk=tag)
             
-        return BlogPost.objects.filter(tags__in=Tag.objects.filter(q))
+        return BlogPost.objects.filter(
+            tags__in=Tag.objects.filter(q)
+        ).annotate(num_tags=Count('tags')).order_by('-num_tags')
             
 
 class ListTagAPIView(generics.ListAPIView):
@@ -40,4 +42,6 @@ class ListTagAPIView(generics.ListAPIView):
     
     def get_queryset(self):
         tag_text = self.request.query_params.get('tag')
-        return Tag.objects.filter(name__icontains=tag_text).annotate(num_posts=Count('blog_posts')).order_by('-num_posts')
+        return Tag.objects.filter(
+            name__icontains=tag_text
+        ).annotate(num_posts=Count('blog_posts')).order_by('-num_posts')

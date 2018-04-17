@@ -2,6 +2,7 @@ import requests, sys
 from bs4 import BeautifulSoup
 from multiprocessing.pool import ThreadPool
 from itertools import chain
+from dateutil.parser import *
 
 
 class BlogArchive:
@@ -26,6 +27,8 @@ class ArticleArchive:
                     self.author = value.text.strip()
                 except:
                     self.author = 'Unknown'
+            elif key == 'publication_date':
+                self.publication_date = parse(value).date().strftime("%m/%d/%y")
             else:
                 setattr(self, key, value)
 
