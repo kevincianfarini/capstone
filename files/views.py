@@ -4,7 +4,7 @@ from files.models import BlogPost, Tag
 from django.views import generic
 from rest_framework import generics
 from files.serializers import BlogPostSerializer, TagSerializer
-from django.db.models import Q
+from django.db.models import Q, Count
 
 
 class HomepageView(TemplateView):
@@ -43,4 +43,4 @@ class ListTagAPIView(generics.ListAPIView):
     
     def get_queryset(self):
         tag_text = self.request.query_params.get('tag')
-        return Tag.objects.filter(name__icontains=tag_text)
+        return Tag.objects.filter(name__icontains=tag_text).annotate(num_posts=Count('blog_posts')).order_by('-num_posts')
