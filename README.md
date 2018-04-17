@@ -10,7 +10,7 @@ python manage.py migrate
 
 ## Running the Project
 
-This project is separated into a Django backing API and a frontend to consume cached blog documents. All frontend logic can be found in `/frontend`. 
+This project is separated into a Django backing API and a frontend to consume cached blog documents. All frontend logic can be found in `files/templates/frontend`. 
 
 To populate the database with blog documents
 
