@@ -24,12 +24,12 @@ class Command(BaseCommand):
         print(blogs)
         for b in blogs:
             blog, created = Blog.objects.get_or_create(name=b.name)
-            for a in b.articles:
-                blog_post = BlogPost.objects.create(
-                    title=a.title,
-                    author=a.author,
-                    pub_date=a.publication_date,
-                    source=a.url,
-                    blog=blog,
-                    body=a.content
-                )
+            posts = map(lambda a: BlogPost(
+                title=a.title,
+                author=a.author,
+                pub_date=a.publication_date,
+                source=a.url,
+                blog=blog,
+                body=a.content
+            ), b.articles)
+            BlogPost.objects.bulk_create(posts)
