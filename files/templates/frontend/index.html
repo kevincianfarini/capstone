@@ -41,9 +41,10 @@
                             data.forEach(function(obj)  {                            
                                 var body = $("#tableBody");
                                 body.append("<tr>");
-                                body.append("<td><a target='_blank' href='" + obj.url + "'>" + obj.title + "</a></td>")
-                                body.append("<td> " + obj.author + " </td>")
-                                body.append("<td> " + obj.pub_date + " </td>")
+                                body.append("<td><a target='_blank' href='" + obj.url + "'>" + obj.title + "</a></td>");
+                                body.append("<td> " + obj.author + " </td>");
+                                body.append("<td> " + obj.pub_date + " </td>");
+                                body.append("<td><a target='_blank' href='" + obj.source + "'>" + obj.blog.name + "</a></td>");
                                 body.append("</tr>");
                             });
                         }
