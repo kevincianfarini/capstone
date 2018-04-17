@@ -85,7 +85,8 @@ def wordpress(url, threaded):
                         'title': parsed['title'].text.strip(),
                         'publication_date': parsed['meta'].find('time')['datetime'],
                         'author': parsed['meta'].find('span', attrs={'class': 'author'}),
-                        'content': str(parsed['content'])
+                        'content': str(parsed['content']),
+                        'url': link['href']
                     }
                 )
                 print(article)
@@ -136,6 +137,7 @@ def blogspot(url, threaded):
                 'publication_date': page.find('h2', attrs={'class': 'date-header'}).find('span').text.strip(),
                 'author': page.find(attrs={'class': 'post-author'}).find('span'),
                 'content': str(page.find(attrs={'class': 'entry-content'})),
+                'url': link['href']
             })
             print(article)
             return article

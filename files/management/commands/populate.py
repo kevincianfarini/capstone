@@ -29,6 +29,7 @@ class Command(BaseCommand):
                     title=a.title,
                     author=a.author,
                     pub_date=a.publication_date,
+                    source=a.url,
                     blog=blog,
                     body=a.content
                 )
