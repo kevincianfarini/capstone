@@ -20,13 +20,6 @@ class ContentView(TemplateView):
         return context
 
 
-class BlogTableView(generic.ListView):
-    template_name = 'frontend/index.html'
-    context_object_name = 'all_posts'
-    def get_queryset(self):
-        return BlogPost.objects.all()
-
-
 class ListBlogPostAPIView(generics.ListAPIView):
     serializer_class = BlogPostSerializer
 
