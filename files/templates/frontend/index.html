@@ -33,19 +33,21 @@
             $("#tags").change(function() {
                 $("#posts").empty();
 
-                var selected = $.map($("#tags option:selected"), function(obj) {
-                    return $(obj).attr("value");
-                });
+                if ($("#tags option:selected").length > 0) {
+                    var selected = $.map($("#tags option:selected"), function(obj) {
+                        return $(obj).attr("value");
+                    });
 
-                $.ajax({
-                    url: "/files/?tags=" + selected.join("|"),
-                    type: "GET",
-                    success: function(data) {
-                        data.forEach(function(obj)  {
-                            $("#posts").append("<li><a target='_blank' href='" + obj.url + "'>" + obj.title + "</a></li>");
-                        });
-                    }
-                });
+                    $.ajax({
+                        url: "/files/?tags=" + selected.join("|"),
+                        type: "GET",
+                        success: function(data) {
+                            data.forEach(function(obj)  {
+                                $("#posts").append("<li><a target='_blank' href='" + obj.url + "'>" + obj.title + "</a></li>");
+                            });
+                        }
+                    });
+                }
             });
 
         });
