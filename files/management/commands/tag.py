@@ -13,7 +13,7 @@ class Command(BaseCommand):
             r = RAKE.Rake(RAKE.SmartStopList())
             return (            
                 blog,
-                [tag for tag, weight in filter(lambda tag: tag[1] >= 4.0, r.run(text=strip(blog), maxWords=2))]
+                [tag for tag, weight in filter(lambda tag: tag[1] >= 4.0, r.run(text=strip(blog), maxWords=3))]
             )
             
         with ThreadPool(8) as p:
