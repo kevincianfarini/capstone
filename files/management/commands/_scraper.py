@@ -76,6 +76,8 @@ def wordpress(url, threaded):
     def scrape_wordpress_article(link):
         def parse(text):
             parsed = {name: text.find(attrs={'class': 'entry-%s' % name}) for name in ['content', 'meta']}
+            if parsed['content'].find(attrs={'class': 'sharedaddy'}):
+                parsed['content'].find(attrs={'class': 'sharedaddy'}).decompose()
             parsed['title'] = text.find_all('header', limit=2)[1].find('h1')
             return parsed
 

@@ -6,4 +6,6 @@ def strip(blog):
     text = ' '.join([hit.strip() for hit in soup.findAll(string=True) if hit.parent.name != 'script' and not isinstance(hit, Comment)])
     for c in ['.', ',', '!', '?', ':', ';', '"', "'", '-', '~', '(', ')', '[', ']', '|', '/', '\\']:
         text = text.replace(c, ' ')
+    text = re.sub(r"\s+advertisement\s+share", '', text)
+    text = re.sub(r"\s+advertisements\s+share", '', text)
     return text
