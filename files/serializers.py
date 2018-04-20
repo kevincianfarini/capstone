@@ -16,10 +16,9 @@ class BlogSerializer(serializers.ModelSerializer):
 
 class BlogPostSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url', read_only=True)
-    tags = TagSerializer(many=True)
     blog = BlogSerializer()
 
     class Meta:
         model = BlogPost
-        exclude = ('body', )
+        exclude = ('body', 'tags')
         
