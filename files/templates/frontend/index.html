@@ -17,7 +17,7 @@
                     processResults: function(data) {
                         return {
                             results: $.map(data, function(obj) {
-                                obj.text = obj.name || obj.text;
+                                obj.id = obj.text = obj.name;
                                 return obj;
                             })
                         }
@@ -26,7 +26,7 @@
                 minimumInputLength: 3
             });
 
-            $("#tags").change(function() {
+            $("#tags, #sort, #order").change(function() {
                 $("#tableBody").empty();
 
                 if ($("#tags option:selected").length > 0) {
@@ -35,7 +35,7 @@
                     });
 
                     $.ajax({
-                        url: "/files/?tags=" + selected.join("|"),
+                        url: "/files/?tags=" + selected.join("|") + "&order=" + $("#order option:selected").attr("value") +$("#sort option:selected").attr("value"),
                         type: "GET",
                         success: function(data) {
                             data.forEach(function(obj)  {                            
@@ -65,8 +65,28 @@
 
 <body>
     <div class='container' style='padding-top: 15px;'>
-        <label>Select tags to search: </label>
-        <select style="width: 300px;" id="tags" multiple="multiple"></select>
+        <div class="row">
+            <div class="col-xs-6" style="margin-right: 50px;">
+                <label>Select tags to search: </label>
+                <select style="width: 300px;" id="tags" multiple="multiple"></select>
+            </div>
+            <div class="col-xs-3" style="margin-right: 50px;">
+                <label>Sort By: </label>
+                <select id="sort">
+                    <option value="num_tags" selected>Relevence</option>
+                    <option value="author">Author</option>
+                    <option value="title">Post Title</option>
+                    <option value="pub_date">Publication Date</option>
+                </select>
+            </div>
+            <div class="col-xs-3">
+                <label>Order: </label>
+                <select id="order">
+                    <option value="-" selected>Descending</option>
+                    <option value="">Ascending</option>
+                </select>
+            </div>
+        </div>
         <table class='table table-striped'>
             <thead class='thead-dark'>
                 <tr>

@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from files.models import Blog, BlogPost
 from ._scraper import scrape
 
+
 class Command(BaseCommand):
     help = 'scrape input file sites for blog posts'
 

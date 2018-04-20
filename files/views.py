@@ -24,17 +24,16 @@ class ListBlogPostAPIView(generics.ListAPIView):
     serializer_class = BlogPostSerializer
 
     def get_queryset(self):
-        query_type = self.request.query_params.get('type', 'OR')
+
+        order = self.request.query_params.get('order')
+
         q = Q()
         for tag in self.request.query_params.get('tags').split('|'):
-            if query_type == 'OR':
-                q |= Q(pk=tag)
-            else:
-                q &= Q(pk=tag)
-            
+            q |= Q(name__icontains=tag)
+
         return BlogPost.objects.filter(
             tags__in=Tag.objects.filter(q)
-        ).annotate(num_tags=Count('tags')).order_by('-num_tags')
+        ).annotate(num_tags=Count('tags')).order_by(order)
             
 
 class ListTagAPIView(generics.ListAPIView):

@@ -28,7 +28,7 @@ class ArticleArchive:
                 except:
                     self.author = 'Unknown'
             elif key == 'publication_date':
-                self.publication_date = parse(value).date().strftime("%m/%d/%y")
+                self.publication_date = parse(value).date()
             else:
                 setattr(self, key, value)
 
