@@ -24,7 +24,6 @@ class ListBlogPostAPIView(generics.ListAPIView):
     serializer_class = BlogPostSerializer
 
     def get_queryset(self):
-
         order = self.request.query_params.get('order')
 
         q = Q()

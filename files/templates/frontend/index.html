@@ -35,12 +35,11 @@
                     });
 
                     $.ajax({
-                        url: "/files/?tags=" + selected.join("|") + "&order=" + $("#order option:selected").attr("value") +$("#sort option:selected").attr("value"),
+                        url: "/files/?tags=" + selected.join("|") + "&order=" + $("#order option:selected").attr("value") + $("#sort option:selected").attr("value"),
                         type: "GET",
                         success: function(data) {
-                            data.forEach(function(obj)  {                            
-                                var body = $("#tableBody");
-                                body.append(
+                            data.forEach(function(obj) {                            
+                                $("#tableBody") = body.append(
                                     "<tr>" +
                                         "<td><a target='_blank' href='" + obj.url + "'>" + obj.title + "</a></td>" +
                                         "<td> " + obj.author + " </td>" +
@@ -55,8 +54,6 @@
             });
 
         });
-
-        
     </script>
     <style>
         table {
