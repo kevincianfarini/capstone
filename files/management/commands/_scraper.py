@@ -35,6 +35,15 @@ class ArticleArchive:
     def __str__(self):
         return '%s -> (%s, %s)' % (self.title, self.author, self.publication_date)
 
+    def __eq__(self, other):
+        return isinstance(other, ArticleArchive) and str(other) == self.__str__()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__str__())
+
 
 class WordPressBlog:
     def __init__(self, url):
@@ -81,23 +90,26 @@ def wordpress(url, threaded):
             parsed['title'] = text.find_all('header', limit=2)[1].find('h1')
             return parsed
 
-        if link:
-            response = requests.get(link['href'])
-            if response.status_code != 404:
-                html = BeautifulSoup(response.content, 'html.parser')
-                parsed = parse(html)
-                article = ArticleArchive(**{
-                        'title': parsed['title'].text.strip(),
-                        'publication_date': parsed['meta'].find('time')['datetime'],
-                        'author': parsed['meta'].find('span', attrs={'class': 'author'}),
-                        'content': str(parsed['content']),
-                        'url': link['href']
-                    }
-                )
-                print(article)
-                return article
-            else:
-                print('404: %s' % link['href'])
+        try:
+            if link:
+                response = requests.get(link['href'])
+                if response.status_code != 404:
+                    html = BeautifulSoup(response.content, 'html.parser')
+                    parsed = parse(html)
+                    article = ArticleArchive(**{
+                            'title': parsed['title'].text.strip(),
+                            'publication_date': parsed['meta'].find('time')['datetime'],
+                            'author': parsed['meta'].find('span', attrs={'class': 'author'}),
+                            'content': str(parsed['content']),
+                            'url': link['href']
+                        }
+                    )
+                    print(article)
+                    return article
+                else:
+                    print('404: %s' % link['href'])
+        except:
+            return None
 
     def scrape_wordpress_page(page):
         return [
@@ -135,17 +147,20 @@ def blogspot(url, threaded):
             return BlogArchive(title.strip())
 
     def scrape_blogspot_article(link):
-        if link:
-            page = BeautifulSoup(requests.get(link['href']).content, 'html.parser')
-            article = ArticleArchive(**{
-                'title': page.find('h3', attrs={'class': 'post-title'}).text.strip(),
-                'publication_date': page.find('h2', attrs={'class': 'date-header'}).find('span').text.strip(),
-                'author': page.find(attrs={'class': 'post-author'}).find('span'),
-                'content': str(page.find(attrs={'class': 'entry-content'})),
-                'url': link['href']
-            })
-            print(article)
-            return article
+        try:
+            if link:
+                page = BeautifulSoup(requests.get(link['href']).content, 'html.parser')
+                article = ArticleArchive(**{
+                    'title': page.find('h3', attrs={'class': 'post-title'}).text.strip(),
+                    'publication_date': page.find('h2', attrs={'class': 'date-header'}).find('span').text.strip(),
+                    'author': page.find(attrs={'class': 'post-author'}).find('span'),
+                    'content': str(page.find(attrs={'class': 'entry-content'})),
+                    'url': link['href']
+                })
+                print(article)
+                return article
+        except:
+            return None
             
     def scrape_blogspot_page(page):
         return [

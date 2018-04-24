@@ -12,7 +12,9 @@ class Command(BaseCommand):
         if not os.path.exists('./exported'):
             os.makedirs('./exported')
 
-        for blog in BlogPost.objects.all():
-            text_file = open('./exported/%d.txt' % blog.pk, 'w')
-            text_file.write(strip(blog))
-            text_file.close()
+        with open('./exported/export.csv') as f:
+            for blog in BlogPost.objects.all():
+                f.write(
+                    '%s, %s, %s, %s, %s\n' % (blog.title, blog.author, str(blog.pub_date), blog.source, strip(blog.body))
+                )
+            f.close()

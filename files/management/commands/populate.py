@@ -32,5 +32,5 @@ class Command(BaseCommand):
                 source=a.url,
                 blog=blog,
                 body=a.content
-            ), b.articles)
+            ), set(list(filter(lambda article: article is not None, b.articles))))
             BlogPost.objects.bulk_create(posts)

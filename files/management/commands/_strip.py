@@ -8,4 +8,5 @@ def strip(blog):
         text = text.replace(c, ' ')
     text = re.sub(r"\s+advertisement\s+share", '', text)
     text = re.sub(r"\s+advertisements\s+share", '', text)
+    text = text.replace('\n', '')
     return text
