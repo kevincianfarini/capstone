@@ -3,18 +3,14 @@ from files.models import Blog, BlogPost
 from bs4 import BeautifulSoup
 from ._strip import strip
 import os
+import pandas
+import sqlite3
+
 
 class Command(BaseCommand):
     help = 'Export blogs as text files to ./export'
 
     def handle(self, *args, **kwargs):
-
-        if not os.path.exists('./exported'):
-            os.makedirs('./exported')
-
-        with open('./exported/export.csv') as f:
-            for blog in BlogPost.objects.all():
-                f.write(
-                    '%s, %s, %s, %s, %s\n' % (blog.title, blog.author, str(blog.pub_date), blog.source, strip(blog.body))
-                )
-            f.close()
+        dat = sqlite3.connect('db.sqlite3')
+        d = pandas.read_sql_query('select * from files_blogpost', dat)
+        d.to_csv('export.csv')
